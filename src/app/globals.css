@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #1e2a4a;
+  --ink-soft: #4a5578;
+  --paper: #eaf0f6;
+  --paper-line: #d7e1ec;
+  --card: #ffffff;
+  --stempel: #d64545;
+  --stempel-soft: #fbe8e8;
+  --bintang: #f2b705;
+  --hijau: #3f9142;
+  --hijau-soft: #e4f3e5;
+  --coral: #ff7a59;
+  --coral-soft: #ffe9e1;
+  --amber: #c97f0b;
+  --amber-soft: #fef3d6;
+  --ungu: #6c63e0;
+  --ungu-soft: #eceafb;
+  --line: #e3e8f0;
+  --bg-neutral: #dce1e8;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-paper: var(--paper);
+  --color-paper-line: var(--paper-line);
+  --color-card: var(--card);
+  --color-stempel: var(--stempel);
+  --color-stempel-soft: var(--stempel-soft);
+  --color-bintang: var(--bintang);
+  --color-hijau: var(--hijau);
+  --color-hijau-soft: var(--hijau-soft);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-ungu: var(--ungu);
+  --color-ungu-soft: var(--ungu-soft);
+  --color-line: var(--line);
+  --color-bg-neutral: var(--bg-neutral);
+  --font-display: var(--font-baloo), sans-serif;
+  --font-body: var(--font-jakarta), sans-serif;
+  --font-mono-brand: var(--font-space-mono), monospace;
+}
+
+body {
+  background: var(--bg-neutral);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
