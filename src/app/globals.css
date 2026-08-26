@@ -19,6 +19,21 @@
   --ungu-soft: #eceafb;
   --line: #e3e8f0;
   --bg-neutral: #dce1e8;
+
+  /* Design tokens baru */
+  --brand-blue: #3EA8DE;
+  --brand-blue-dark: #1B7FB8;
+  --navy: #17395B;
+  --orange: #F58634;
+  --yellow: #F5C33B;
+  --green: #35C0A0;
+  --red-danger: #E4573C;
+  --cream: #FFF7EC;
+  --grey-bg: #F6F9FC;
+  --page-bg: #EAF1F7;
+  --muted: #8AA3BB;
+  --muted-2: #6B87A3;
+  --border-color: #E1EAF2;
 }
 
 @theme inline {
@@ -43,10 +58,25 @@
   --font-display: var(--font-baloo), sans-serif;
   --font-body: var(--font-jakarta), sans-serif;
   --font-mono-brand: var(--font-space-mono), monospace;
+
+  /* Design tokens baru */
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-dark: var(--brand-blue-dark);
+  --color-navy: var(--navy);
+  --color-orange: var(--orange);
+  --color-yellow: var(--yellow);
+  --color-green: var(--green);
+  --color-red-danger: var(--red-danger);
+  --color-cream: var(--cream);
+  --color-grey-bg: var(--grey-bg);
+  --color-page-bg: var(--page-bg);
+  --color-muted: var(--muted);
+  --color-muted-2: var(--muted-2);
+  --color-border-color: var(--border-color);
 }
 
 body {
-  background: var(--bg-neutral);
+  background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font-body);
 }
@@ -54,4 +84,27 @@ body {
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
+}
+
+/* Chunky button style */
+.btn-chunky {
+  box-shadow: inset 0 -5px 0 rgba(0,0,0,0.22);
+}
+.btn-chunky:active {
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+/* Card shadow */
+.card-shadow {
+  box-shadow: 0 3px 0 #E9EFF5;
+}
+
+/* Bottom sheet animation */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 220ms ease-out;
 }

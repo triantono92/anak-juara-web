@@ -8,6 +8,13 @@ export type VerifyType = "foto" | "rekam" | "kuis";
 export type SubmissionStatus = "pending" | "approved" | "rejected" | "auto_done";
 export type RewardCategory = "Uang" | "Privilege" | "Barang";
 
+// Tipe baru untuk redesign
+export type MissionKategori = "Ibadah" | "Belajar" | "Rumah" | "Sehat" | "Sekolah" | "Netral";
+export type MissionGrup = "Harian" | "Mingguan";
+export type ParentRole = "ayah" | "bunda" | "wali";
+export type MemberStatus = "aktif" | "menunggu" | "pemilik";
+export type RedemptionStatus = "menunggu" | "disetujui" | "ditolak";
+
 export interface Family {
   id: string;
   name: string;
@@ -25,6 +32,12 @@ export interface AppUser {
   class_info: string | null;
   stars: number;
   created_at: string;
+  // Kolom baru dari migration_002
+  level: number;
+  streak: number;
+  parent_role: ParentRole | null;
+  member_status: MemberStatus;
+  age: number | null;
 }
 
 export interface Mission {
@@ -39,6 +52,9 @@ export interface Mission {
   deadline_time: string; // "HH:MM"
   active: boolean;
   created_at: string;
+  // Kolom baru dari migration_002
+  kategori: MissionKategori;
+  grup: MissionGrup;
 }
 
 export interface QuizQuestion {
@@ -74,6 +90,9 @@ export interface Reward {
   rupiah_amount: number | null;
   assigned_to: "all" | string;
   active: boolean;
+  // Kolom baru dari migration_002
+  stok: number | null;
+  batas_per_minggu: number | null;
 }
 
 export interface Redemption {
@@ -83,6 +102,22 @@ export interface Redemption {
   reward_name: string;
   stars_spent: number;
   timestamp: string;
+  // Kolom baru dari migration_002
+  status: RedemptionStatus;
+}
+
+export interface ScheduleBlock {
+  id: string;
+  child_id: string;
+  family_id: string;
+  hari: number; // 0=Senin..6=Minggu
+  jam_mulai: string; // "HH:MM"
+  durasi_menit: number;
+  nama: string;
+  kategori: MissionKategori;
+  mission_ids: string[];
+  aktif: boolean;
+  created_at: string;
 }
 
 // Bare-bones Database type so `@supabase/ssr` generics have something to
