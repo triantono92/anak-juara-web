@@ -15,10 +15,14 @@ export async function addReward(input: {
   if (!user) throw new Error("Belum login sebagai ortu.");
 
   const supabase = await createClient();
-  const { data: me } = await supabase.from("app_users").select("family_id").eq("id", user.id).single();
+  const { data: me } = await supabase
+    .from("app_users")
+    .select("family_id")
+    .eq("id", user.id)
+    .single();
   if (!me) throw new Error("Akun ortu tidak ditemukan.");
 
-  const icon = input.category === "Uang" ? "💵" : input.category === "Privilege" ? "🎮" : "🎁";
+  const icon = "";
 
   const { error } = await supabase.from("rewards").insert({
     family_id: me.family_id,
@@ -37,7 +41,10 @@ export async function toggleReward(id: string, active: boolean) {
   if (!user) throw new Error("Belum login sebagai ortu.");
 
   const supabase = await createClient();
-  const { error } = await supabase.from("rewards").update({ active: !active }).eq("id", id);
+  const { error } = await supabase
+    .from("rewards")
+    .update({ active: !active })
+    .eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/ortu/hadiah");
 }

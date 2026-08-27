@@ -3,15 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getParentUser } from "@/lib/auth";
+import type { MissionKategori, MissionGrup, VerifyType } from "@/lib/types";
 
 type MissionInput = {
   name: string;
   icon: string;
-  verifyType: "foto" | "rekam" | "kuis";
+  verifyType: VerifyType;
   days: number[];
   assignedTo: string[];
   stars: number;
   deadlineTime: string;
+  kategori?: MissionKategori;
+  grup?: MissionGrup;
 };
 
 export async function addMission(input: MissionInput) {
@@ -19,7 +22,11 @@ export async function addMission(input: MissionInput) {
   if (!user) throw new Error("Belum login sebagai ortu.");
 
   const supabase = await createClient();
-  const { data: me } = await supabase.from("app_users").select("family_id").eq("id", user.id).single();
+  const { data: me } = await supabase
+    .from("app_users")
+    .select("family_id")
+    .eq("id", user.id)
+    .single();
   if (!me) throw new Error("Akun ortu tidak ditemukan.");
 
   const { error } = await supabase.from("missions").insert({
@@ -31,6 +38,8 @@ export async function addMission(input: MissionInput) {
     assigned_to: input.assignedTo,
     stars: input.stars,
     deadline_time: input.deadlineTime,
+    kategori: input.kategori ?? "Netral",
+    grup: input.grup ?? "Harian",
   });
   if (error) throw new Error(error.message);
 
@@ -52,6 +61,8 @@ export async function updateMission(id: string, input: MissionInput) {
       assigned_to: input.assignedTo,
       stars: input.stars,
       deadline_time: input.deadlineTime,
+      kategori: input.kategori ?? "Netral",
+      grup: input.grup ?? "Harian",
     })
     .eq("id", id);
   if (error) throw new Error(error.message);
@@ -75,7 +86,10 @@ export async function toggleMissionActive(id: string, active: boolean) {
   if (!user) throw new Error("Belum login sebagai ortu.");
 
   const supabase = await createClient();
-  const { error } = await supabase.from("missions").update({ active: !active }).eq("id", id);
+  const { error } = await supabase
+    .from("missions")
+    .update({ active: !active })
+    .eq("id", id);
   if (error) throw new Error(error.message);
 
   revalidatePath("/ortu/misi");
