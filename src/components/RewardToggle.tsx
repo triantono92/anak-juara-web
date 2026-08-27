@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toggleReward } from "@/app/ortu/(app)/hadiah/actions";
 
-export function RewardToggle({ id, active }: { id: string; active: boolean }) {
+export function RewardToggle({ id, active, isWali = false }: { id: string; active: boolean; isWali?: boolean }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+
+  if (isWali) return null;
 
   return (
     <button

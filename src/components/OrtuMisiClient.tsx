@@ -52,18 +52,20 @@ function MisiRow({
   mission,
   kids,
   onEdit,
+  isWali,
 }: {
   mission: Mission;
   kids: AppUser[];
   onEdit: (m: Mission) => void;
+  isWali: boolean;
 }) {
   const assignedKids = kids.filter((k) => mission.assigned_to.includes(k.id));
   return (
-    <button
-      onClick={() => onEdit(mission)}
+    <div
+      onClick={() => { if (!isWali) onEdit(mission); }}
       className={`w-full bg-white rounded-2xl p-3.5 card-shadow flex items-center gap-3 text-left transition-opacity ${
         !mission.active ? "opacity-50" : ""
-      }`}
+      } ${!isWali ? "cursor-pointer" : ""}`}
     >
       <CategoryIcon kategori={mission.kategori ?? "Netral"} size={40} />
       <div className="flex-1 min-w-0">
@@ -89,8 +91,8 @@ function MisiRow({
           ))}
         </div>
       </div>
-      <MisiToggle id={mission.id} active={mission.active} />
-    </button>
+      {!isWali && <MisiToggle id={mission.id} active={mission.active} />}
+    </div>
   );
 }
 
@@ -363,9 +365,11 @@ function MisiSheetForm({
 export function OrtuMisiClient({
   missions,
   kids,
+  isWali = false,
 }: {
   missions: Mission[];
   kids: AppUser[];
+  isWali?: boolean;
 }) {
   const [editingMission, setEditingMission] = useState<Mission | null | undefined>(
     undefined
@@ -378,16 +382,18 @@ export function OrtuMisiClient({
   return (
     <>
       <div className="p-4 space-y-4">
-        {/* Tombol tambah */}
-        <button
-          onClick={() => setEditingMission(null)}
-          className="w-full bg-orange text-white font-bold text-sm py-3 rounded-2xl btn-chunky flex items-center justify-center gap-2"
-        >
-          <svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-            <path d="M12 5v14M5 12h14" stroke="white" strokeWidth={2.5} strokeLinecap="round" />
-          </svg>
-          Tambah Misi
-        </button>
+        {/* Tombol tambah — hanya untuk non-Wali */}
+        {!isWali && (
+          <button
+            onClick={() => setEditingMission(null)}
+            className="w-full bg-orange text-white font-bold text-sm py-3 rounded-2xl btn-chunky flex items-center justify-center gap-2"
+          >
+            <svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+              <path d="M12 5v14M5 12h14" stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+            </svg>
+            Tambah Misi
+          </button>
+        )}
 
         {/* Grup Harian */}
         {harian.length > 0 && (
@@ -402,6 +408,7 @@ export function OrtuMisiClient({
                   mission={m}
                   kids={kids}
                   onEdit={setEditingMission}
+                  isWali={isWali}
                 />
               ))}
             </div>
@@ -421,6 +428,7 @@ export function OrtuMisiClient({
                   mission={m}
                   kids={kids}
                   onEdit={setEditingMission}
+                  isWali={isWali}
                 />
               ))}
             </div>
@@ -429,24 +437,26 @@ export function OrtuMisiClient({
 
         {missions.length === 0 && (
           <div className="text-center py-12 text-muted text-sm">
-            Belum ada misi. Tap &quot;Tambah Misi&quot; untuk mulai.
+            Belum ada misi.{!isWali && <> Tap &quot;Tambah Misi&quot; untuk mulai.</>}
           </div>
         )}
       </div>
 
-      <BottomSheet
-        open={sheetOpen}
-        onClose={() => setEditingMission(undefined)}
-        title={editingMission ? "Edit Misi" : "Tambah Misi Baru"}
-      >
-        {sheetOpen && (
-          <MisiSheetForm
-            mission={editingMission ?? null}
-            kids={kids}
-            onClose={() => setEditingMission(undefined)}
-          />
-        )}
-      </BottomSheet>
+      {!isWali && (
+        <BottomSheet
+          open={sheetOpen}
+          onClose={() => setEditingMission(undefined)}
+          title={editingMission ? "Edit Misi" : "Tambah Misi Baru"}
+        >
+          {sheetOpen && (
+            <MisiSheetForm
+              mission={editingMission ?? null}
+              kids={kids}
+              onClose={() => setEditingMission(undefined)}
+            />
+          )}
+        </BottomSheet>
+      )}
     </>
   );
 }

@@ -274,11 +274,13 @@ export function OrtuJadwalClient({
   selectedChildId,
   selectedHari,
   missions,
+  isWali = false,
 }: {
   blocks: ScheduleBlock[];
   selectedChildId: string;
   selectedHari: number;
   missions: Mission[];
+  isWali?: boolean;
 }) {
   const router = useRouter();
   const [editingBlock, setEditingBlock] = useState<
@@ -295,36 +297,38 @@ export function OrtuJadwalClient({
           <div className="text-sm font-semibold text-muted">
             {blocks.length} blok hari ini
           </div>
-          <div className="flex gap-2">
-            {blocks.length > 0 && selectedHari < 5 && (
+          {!isWali && (
+            <div className="flex gap-2">
+              {blocks.length > 0 && selectedHari < 5 && (
+                <button
+                  disabled={copyBusy}
+                  onClick={() =>
+                    startCopy(async () => {
+                      await copyBlocksToWeekdays(selectedChildId, selectedHari);
+                      router.refresh();
+                    })
+                  }
+                  className="text-xs font-bold text-navy border-2 border-navy px-3 py-1.5 rounded-xl disabled:opacity-60"
+                >
+                  {copyBusy ? "Menyalin..." : "Salin ke Sen-Jum"}
+                </button>
+              )}
               <button
-                disabled={copyBusy}
-                onClick={() =>
-                  startCopy(async () => {
-                    await copyBlocksToWeekdays(selectedChildId, selectedHari);
-                    router.refresh();
-                  })
-                }
-                className="text-xs font-bold text-navy border-2 border-navy px-3 py-1.5 rounded-xl disabled:opacity-60"
+                onClick={() => setEditingBlock(null)}
+                className="bg-orange text-white font-bold text-xs px-4 py-1.5 rounded-xl btn-chunky flex items-center gap-1"
               >
-                {copyBusy ? "Menyalin..." : "Salin ke Sen-Jum"}
+                <svg width={12} height={12} viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 5v14M5 12h14"
+                    stroke="white"
+                    strokeWidth={2.5}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                Blok
               </button>
-            )}
-            <button
-              onClick={() => setEditingBlock(null)}
-              className="bg-orange text-white font-bold text-xs px-4 py-1.5 rounded-xl btn-chunky flex items-center gap-1"
-            >
-              <svg width={12} height={12} viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 5v14M5 12h14"
-                  stroke="white"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                />
-              </svg>
-              Blok
-            </button>
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Daftar blok */}
@@ -355,15 +359,15 @@ export function OrtuJadwalClient({
               <path d="M3 9h18" stroke="#8AA3BB" strokeWidth="2" />
             </svg>
             <div className="text-sm font-semibold">Belum ada jadwal</div>
-            <div className="text-xs mt-1">Tap &quot;+ Blok&quot; untuk tambah</div>
+            {!isWali && <div className="text-xs mt-1">Tap &quot;+ Blok&quot; untuk tambah</div>}
           </div>
         )}
 
         {blocks.map((block) => (
-          <button
+          <div
             key={block.id}
-            onClick={() => setEditingBlock(block)}
-            className="w-full bg-white rounded-2xl p-3.5 card-shadow flex items-center gap-3 text-left"
+            onClick={() => { if (!isWali) setEditingBlock(block); }}
+            className={`w-full bg-white rounded-2xl p-3.5 card-shadow flex items-center gap-3 text-left ${!isWali ? "cursor-pointer" : ""}`}
           >
             <CategoryIcon kategori={block.kategori} size={40} />
             <div className="flex-1 min-w-0">
@@ -375,26 +379,28 @@ export function OrtuJadwalClient({
                   : ""}
               </div>
             </div>
-            <BlockToggle block={block} />
-          </button>
+            {!isWali && <BlockToggle block={block} />}
+          </div>
         ))}
       </div>
 
-      <BottomSheet
-        open={sheetOpen}
-        onClose={() => setEditingBlock(undefined)}
-        title={editingBlock ? "Edit Blok" : "Tambah Blok Waktu"}
-      >
-        {sheetOpen && (
-          <BlockForm
-            block={editingBlock ?? null}
-            selectedChildId={selectedChildId}
-            selectedHari={selectedHari}
-            missions={missions}
-            onClose={() => setEditingBlock(undefined)}
-          />
-        )}
-      </BottomSheet>
+      {!isWali && (
+        <BottomSheet
+          open={sheetOpen}
+          onClose={() => setEditingBlock(undefined)}
+          title={editingBlock ? "Edit Blok" : "Tambah Blok Waktu"}
+        >
+          {sheetOpen && (
+            <BlockForm
+              block={editingBlock ?? null}
+              selectedChildId={selectedChildId}
+              selectedHari={selectedHari}
+              missions={missions}
+              onClose={() => setEditingBlock(undefined)}
+            />
+          )}
+        </BottomSheet>
+      )}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getParentUser } from "@/lib/auth";
+import { getCurrentAppUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { OrtuAnggotaClient } from "@/components/OrtuAnggotaClient";
 import type { AppUser, MemberStatus } from "@/lib/types";
@@ -61,8 +61,9 @@ function InitialsAvatar({
 }
 
 export default async function AnggotaPage() {
-  const user = await getParentUser();
-  if (!user) redirect("/masuk");
+  const user = await getCurrentAppUser();
+  if (!user || user.role !== "ortu") redirect("/masuk");
+  const isWali = user.parentRole === "wali";
 
   const supabase = await createClient();
   const [{ data: family }, { data: familyRow }] = await Promise.all([
@@ -103,7 +104,7 @@ export default async function AnggotaPage() {
 
       <div className="p-4 space-y-4">
         {/* Tombol tambah */}
-        <OrtuAnggotaClient />
+        <OrtuAnggotaClient isWali={isWali} />
 
         {/* Grup Anak */}
         {kids.length > 0 && (
