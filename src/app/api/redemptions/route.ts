@@ -22,7 +22,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Hadiah tidak tersedia." }, { status: 404 });
   }
 
-  const { data: child } = await supabase.from("app_users").select("stars").eq("id", session.childId).single();
+  // Baca bintang hanya untuk cek kecukupan — update dilakukan atomik via RPC.
+  const { data: child } = await supabase
+    .from("app_users")
+    .select("stars")
+    .eq("id", session.childId)
+    .single();
   if (!child || child.stars < reward.stars_cost) {
     return NextResponse.json({ error: "Bintang tidak cukup." }, { status: 400 });
   }
@@ -40,7 +45,12 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  await supabase.from("app_users").update({ stars: child.stars - reward.stars_cost }).eq("id", session.childId);
+  // Kurangi bintang atomik via RPC (delta negatif; function pakai GREATEST(0,...)).
+  const { error: rpcErr } = await supabase.rpc("increment_stars", {
+    p_user_id: session.childId,
+    p_delta: -reward.stars_cost,
+  });
+  if (rpcErr) return NextResponse.json({ error: rpcErr.message }, { status: 500 });
 
   return NextResponse.json(redemption);
 }

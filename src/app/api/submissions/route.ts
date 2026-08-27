@@ -54,11 +54,13 @@ export async function POST(req: NextRequest) {
   }
 
   if (isKuis) {
-    // Kuis auto-selesai: bintang langsung masuk, tidak menunggu approval ortu.
-    // (Update manual, bukan RPC atomic — cukup untuk skala 1 keluarga; lihat
-    // README untuk catatan mengganti ini dengan Postgres function jika perlu.)
-    const { data: user } = await supabase.from("app_users").select("stars").eq("id", session.childId).single();
-    await supabase.from("app_users").update({ stars: (user?.stars ?? 0) + mission.stars }).eq("id", session.childId);
+    // Kuis auto-selesai: tambah bintang atomik via RPC — menghindari
+    // race condition read-then-write non-atomik.
+    const { error: rpcErr } = await supabase.rpc("increment_stars", {
+      p_user_id: session.childId,
+      p_delta: mission.stars,
+    });
+    if (rpcErr) return NextResponse.json({ error: rpcErr.message }, { status: 500 });
   }
 
   return NextResponse.json(sub);

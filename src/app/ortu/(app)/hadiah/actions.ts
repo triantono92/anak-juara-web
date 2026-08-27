@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getParentUser } from "@/lib/auth";
+import { getCurrentAppUser } from "@/lib/auth";
 import type { RewardCategory } from "@/lib/types";
 
 export async function addReward(input: {
@@ -11,16 +11,11 @@ export async function addReward(input: {
   starsCost: number;
   assignedTo: string;
 }) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Belum login sebagai ortu.");
+  const user = await getCurrentAppUser();
+  if (!user || user.role !== "ortu") throw new Error("Belum login sebagai ortu.");
 
   const supabase = await createClient();
-  const { data: me } = await supabase
-    .from("app_users")
-    .select("family_id")
-    .eq("id", user.id)
-    .single();
-  if (!me) throw new Error("Akun ortu tidak ditemukan.");
+  const me = { family_id: user.familyId };
 
   const icon = "";
 
@@ -37,10 +32,19 @@ export async function addReward(input: {
 }
 
 export async function toggleReward(id: string, active: boolean) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Belum login sebagai ortu.");
+  const user = await getCurrentAppUser();
+  if (!user || user.role !== "ortu") throw new Error("Belum login sebagai ortu.");
 
   const supabase = await createClient();
+
+  // Defense-in-depth: verifikasi reward milik keluarga requester sebelum update.
+  const { data: reward } = await supabase
+    .from("rewards")
+    .select("family_id")
+    .eq("id", id)
+    .single();
+  if (!reward || reward.family_id !== user.familyId) throw new Error("Hadiah tidak ditemukan.");
+
   const { error } = await supabase
     .from("rewards")
     .update({ active: !active })

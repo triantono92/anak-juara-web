@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { QuizQuestion } from "@/lib/types";
+import { getCurrentAppUser } from "@/lib/auth";
 
 // POST /api/quiz/generate
 // Body: { imageBase64: string, mediaType?: string }
 // Memanggil Anthropic API server-side (API key tidak pernah dikirim ke browser).
 export async function POST(req: NextRequest) {
+  // Harus login sebagai anak atau ortu — cegah penyalahgunaan Anthropic API berbayar.
+  const user = await getCurrentAppUser();
+  if (!user) {
+    return NextResponse.json({ error: "Belum login." }, { status: 401 });
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
