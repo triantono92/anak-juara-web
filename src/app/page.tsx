@@ -76,7 +76,7 @@ export default function HomePage() {
 
         {/* Footer */}
         <footer className="bg-navy text-white px-6 py-5 flex items-center justify-between">
-          <span className="text-sm font-bold">anakjuara.online</span>
+          <Logo size="sm" variant="dark" />
           <a href="mailto:bantuan@anakjuara.online" className="text-sm text-[#8aafcd]">
             Bantuan
           </a>

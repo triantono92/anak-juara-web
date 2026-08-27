@@ -23,6 +23,14 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Anak Juara",
   description: "Aplikasi kontrol pencapaian anak untuk keluarga",
+  icons: {
+    icon: [
+      { url: "/icon", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-icon", type: "image/png", sizes: "180x180" },
+    ],
+  },
 };
 
 export default function RootLayout({
