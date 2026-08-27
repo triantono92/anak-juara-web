@@ -34,7 +34,7 @@ export default function MasukPage() {
       if (data.role === "anak") {
         router.push("/anak");
       } else {
-        router.push("/ortu/persetujuan");
+        router.push("/ortu");
       }
       router.refresh();
     } else {

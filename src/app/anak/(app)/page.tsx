@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getChildSession } from "@/lib/auth";
 import { createServiceClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { AnakLogoutButton } from "@/components/AnakLogoutButton";
 import type { Mission, Submission } from "@/lib/types";
 
 const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
@@ -87,7 +88,10 @@ export default async function AnakDashboardPage() {
     <div className="p-4 space-y-3">
       {/* Kartu biru sapaan */}
       <div className="bg-brand-blue rounded-3xl p-4 text-white">
-        <div className="text-sm opacity-80 mb-1">{formatDate(new Date())}</div>
+        <div className="flex items-center justify-between mb-1">
+          <div className="text-sm opacity-80">{formatDate(new Date())}</div>
+          <AnakLogoutButton />
+        </div>
         <div className="font-display font-bold text-xl mb-3">Hai, {child.name}!</div>
         <div className="flex gap-4">
           <div className="text-center">
