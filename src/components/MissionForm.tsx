@@ -50,22 +50,22 @@ export function MissionForm({ kids }: { kids: AppUser[] }) {
 
   if (!open) {
     return (
-      <button onClick={() => setOpen(true)} className="bg-coral text-white font-bold text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1">
+      <button onClick={() => setOpen(true)} className="bg-orange text-white font-bold text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1">
         <Plus size={12} /> Tambah Misi
       </button>
     );
   }
 
   return (
-    <div className="bg-white border border-dashed border-[#c3ccdc] rounded-2xl p-3.5 space-y-3">
-      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama misi" className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold" />
+    <div className="bg-white border border-dashed border-border-color rounded-2xl p-3.5 space-y-3">
+      <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nama misi" className="w-full border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none" />
       <div className="flex gap-2">
         {(["foto", "rekam", "kuis"] as VerifyType[]).map((t) => (
           <button
             key={t}
             onClick={() => setVerifyType(t)}
-            className={`flex-1 py-2 rounded-lg text-[10.5px] font-bold border capitalize ${
-              verifyType === t ? "bg-[#eef1f6] border-ink text-ink" : "border-line text-ink-soft"
+            className={`flex-1 py-2 rounded-xl text-[10.5px] font-bold border-2 capitalize ${
+              verifyType === t ? "bg-grey-bg border-navy text-navy" : "border-border-color text-muted"
             }`}
           >
             {t}
@@ -78,7 +78,7 @@ export function MissionForm({ kids }: { kids: AppUser[] }) {
             key={i}
             onClick={() => setDays(days.includes(i) ? days.filter((x) => x !== i) : [...days, i])}
             className={`flex-1 aspect-square rounded-lg text-[10px] font-bold ${
-              days.includes(i) ? "bg-hijau text-white" : "border border-line text-ink-soft"
+              days.includes(i) ? "bg-green text-white" : "border border-border-color text-muted"
             }`}
           >
             {d[0]}
@@ -90,8 +90,8 @@ export function MissionForm({ kids }: { kids: AppUser[] }) {
           <button
             key={c.id}
             onClick={() => setAssigned(assigned.includes(c.id) ? assigned.filter((x) => x !== c.id) : [...assigned, c.id])}
-            className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold border ${
-              assigned.includes(c.id) ? "bg-coral-soft border-[#ff9c7a] text-[#e8664a]" : "border-line text-ink-soft"
+            className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold border-2 ${
+              assigned.includes(c.id) ? "bg-coral-soft border-orange text-orange" : "border-border-color text-muted"
             }`}
           >
             {c.name}
@@ -99,11 +99,11 @@ export function MissionForm({ kids }: { kids: AppUser[] }) {
         ))}
       </div>
       <div className="flex gap-2">
-        <input value={stars} onChange={(e) => setStars(e.target.value.replace(/\D/g, ""))} placeholder="Bintang" className="flex-1 border border-line rounded-lg px-3 py-2 text-xs font-semibold" />
-        <input value={deadline} onChange={(e) => setDeadline(e.target.value)} placeholder="18:00" className="flex-1 border border-line rounded-lg px-3 py-2 text-xs font-semibold" />
+        <input value={stars} onChange={(e) => setStars(e.target.value.replace(/\D/g, ""))} placeholder="Bintang" className="flex-1 border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none" />
+        <input value={deadline} onChange={(e) => setDeadline(e.target.value)} placeholder="18:00" className="flex-1 border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none" />
       </div>
-      {err && <div className="text-stempel text-[11px] font-semibold">{err}</div>}
-      <button disabled={busy} onClick={submit} className="w-full bg-coral text-white font-bold text-xs py-2.5 rounded-lg disabled:opacity-60">
+      {err && <div className="text-red-danger text-[11px] font-semibold">{err}</div>}
+      <button disabled={busy} onClick={submit} className="w-full bg-orange text-white font-bold text-xs py-2.5 rounded-xl btn-chunky disabled:opacity-60">
         {busy ? "Menyimpan..." : "Simpan Misi"}
       </button>
     </div>

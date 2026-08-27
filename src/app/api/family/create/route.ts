@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     role: "ortu",
     username: parentName.toLowerCase().replace(/\s+/g, "."),
     auth_method: "password",
-    avatar_color: "#1E2A4A",
+    avatar_color: "#17395B",
     parent_role: parentRole ?? "bunda",
     member_status: "pemilik",
   });

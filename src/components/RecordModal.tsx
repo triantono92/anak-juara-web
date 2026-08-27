@@ -56,11 +56,11 @@ export function RecordModal({
               state === "recording" ? "border-ungu animate-pulse" : "border-ungu-soft"
             }`}
           >
-            <span className="font-mono-brand text-2xl font-bold text-ink">
+            <span className="font-mono-brand text-2xl font-bold text-navy">
               {mm}:{ss}
             </span>
           </div>
-          <div className="text-xs font-bold text-ink-soft text-center">
+          <div className="text-xs font-bold text-muted text-center">
             {state === "idle" && "Tekan tombol untuk mulai merekam"}
             {state === "recording" && "🔴 Sedang merekam..."}
             {state === "preview" && "✅ Selesai, siap dikirim ke Ortu"}
@@ -68,7 +68,7 @@ export function RecordModal({
           {state === "idle" && (
             <button
               onClick={start}
-              className="w-16 h-16 rounded-full bg-stempel text-white flex items-center justify-center shadow-lg"
+              className="w-16 h-16 rounded-full bg-red-danger text-white flex items-center justify-center btn-chunky"
             >
               <Mic size={22} />
             </button>
@@ -76,7 +76,7 @@ export function RecordModal({
           {state === "recording" && (
             <button
               onClick={stop}
-              className="w-16 h-16 rounded-full bg-stempel text-white flex items-center justify-center shadow-lg"
+              className="w-16 h-16 rounded-full bg-red-danger text-white flex items-center justify-center btn-chunky"
             >
               <Square size={20} />
             </button>
@@ -85,11 +85,11 @@ export function RecordModal({
             <div className="flex gap-2 w-full max-w-[220px]">
               <button
                 onClick={() => setState("idle")}
-                className="flex-1 border border-line font-bold text-xs py-2.5 rounded-xl"
+                className="flex-1 border border-border-color font-bold text-xs py-2.5 rounded-xl text-muted"
               >
                 Ulangi
               </button>
-              <button onClick={onDone} className="flex-1 bg-coral text-white font-bold text-xs py-2.5 rounded-xl">
+              <button onClick={onDone} className="flex-1 bg-orange text-white font-bold text-xs py-2.5 rounded-xl btn-chunky">
                 Kirim ke Ortu
               </button>
             </div>

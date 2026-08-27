@@ -30,7 +30,7 @@ export function RedeemButton({
         router.refresh();
       }}
       className={`text-[10.5px] font-bold py-1.5 rounded-lg ${
-        enough ? "bg-hijau text-white" : "bg-[#eef1f6] text-ink-soft"
+        enough ? "bg-green text-white" : "bg-grey-bg text-muted"
       }`}
     >
       {busy ? "Menukar..." : enough ? "Tukar" : `Kurang ${cost - currentStars}⭐`}

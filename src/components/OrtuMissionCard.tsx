@@ -25,7 +25,6 @@ export function OrtuMissionCard({
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Edit form state — kept in sync with current mission values
   const [name, setName] = useState(mission.name);
   const [verifyType, setVerifyType] = useState<VerifyType>(mission.verify_type);
   const [days, setDays] = useState<number[]>(mission.days);
@@ -87,22 +86,22 @@ export function OrtuMissionCard({
 
   if (editing) {
     return (
-      <div className="bg-white border border-dashed border-[#c3ccdc] rounded-2xl p-3.5 space-y-3">
+      <div className="bg-white border border-dashed border-border-color rounded-2xl p-3.5 space-y-3">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Nama misi"
-          className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
+          className="w-full border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none"
         />
         <div className="flex gap-2">
           {(["foto", "rekam", "kuis"] as VerifyType[]).map((t) => (
             <button
               key={t}
               onClick={() => setVerifyType(t)}
-              className={`flex-1 py-2 rounded-lg text-[10.5px] font-bold border capitalize ${
+              className={`flex-1 py-2 rounded-xl text-[10.5px] font-bold border-2 capitalize ${
                 verifyType === t
-                  ? "bg-[#eef1f6] border-ink text-ink"
-                  : "border-line text-ink-soft"
+                  ? "bg-grey-bg border-navy text-navy"
+                  : "border-border-color text-muted"
               }`}
             >
               {t}
@@ -120,8 +119,8 @@ export function OrtuMissionCard({
               }
               className={`flex-1 aspect-square rounded-lg text-[10px] font-bold ${
                 days.includes(i)
-                  ? "bg-hijau text-white"
-                  : "border border-line text-ink-soft"
+                  ? "bg-green text-white"
+                  : "border border-border-color text-muted"
               }`}
             >
               {d[0]}
@@ -139,10 +138,10 @@ export function OrtuMissionCard({
                     : [...assigned, c.id]
                 )
               }
-              className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold border ${
+              className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold border-2 ${
                 assigned.includes(c.id)
-                  ? "bg-coral-soft border-[#ff9c7a] text-[#e8664a]"
-                  : "border-line text-ink-soft"
+                  ? "bg-coral-soft border-orange text-orange"
+                  : "border-border-color text-muted"
               }`}
             >
               {c.name}
@@ -154,27 +153,27 @@ export function OrtuMissionCard({
             value={stars}
             onChange={(e) => setStars(e.target.value.replace(/\D/g, ""))}
             placeholder="Bintang"
-            className="flex-1 border border-line rounded-lg px-3 py-2 text-xs font-semibold"
+            className="flex-1 border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none"
           />
           <input
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
             placeholder="18:00"
-            className="flex-1 border border-line rounded-lg px-3 py-2 text-xs font-semibold"
+            className="flex-1 border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none"
           />
         </div>
-        {err && <div className="text-stempel text-[11px] font-semibold">{err}</div>}
+        {err && <div className="text-red-danger text-[11px] font-semibold">{err}</div>}
         <div className="flex gap-2">
           <button
             onClick={cancelEdit}
-            className="flex-1 border border-line text-ink-soft font-bold text-xs py-2.5 rounded-lg"
+            className="flex-1 border border-border-color text-muted font-bold text-xs py-2.5 rounded-xl"
           >
             Batal
           </button>
           <button
             disabled={busy}
             onClick={handleSave}
-            className="flex-1 bg-coral text-white font-bold text-xs py-2.5 rounded-lg disabled:opacity-60"
+            className="flex-1 bg-orange text-white font-bold text-xs py-2.5 rounded-xl btn-chunky disabled:opacity-60"
           >
             {busy ? "Menyimpan..." : "Simpan"}
           </button>
@@ -185,43 +184,43 @@ export function OrtuMissionCard({
 
   return (
     <div
-      className={`bg-card border border-line rounded-2xl p-3 transition-opacity ${
+      className={`bg-white rounded-2xl p-3 card-shadow transition-opacity ${
         !mission.active ? "opacity-60" : ""
       }`}
     >
       {confirmDelete && (
-        <div className="mb-2 bg-[#fff5f3] border border-[#ffc4b4] rounded-xl p-2.5 flex items-center gap-2">
-          <span className="text-[11px] text-ink font-semibold flex-1">
+        <div className="mb-2 bg-[#FFF0EC] border border-[#F5C0B0] rounded-xl p-2.5 flex items-center gap-2">
+          <span className="text-[11px] text-navy font-semibold flex-1">
             Hapus misi ini?
           </span>
           <button
             onClick={() => setConfirmDelete(false)}
-            className="text-[11px] text-ink-soft font-bold px-2 py-1 rounded-lg border border-line"
+            className="text-[11px] text-muted font-bold px-2 py-1 rounded-lg border border-border-color"
           >
             Batal
           </button>
           <button
             disabled={busy}
             onClick={handleDelete}
-            className="text-[11px] text-white font-bold px-2 py-1 rounded-lg bg-stempel disabled:opacity-60"
+            className="text-[11px] text-white font-bold px-2 py-1 rounded-lg bg-red-danger disabled:opacity-60"
           >
             Hapus
           </button>
         </div>
       )}
       <div className="flex items-start gap-2.5">
-        <div className="w-8 h-8 rounded-lg bg-[#eef1f6] flex items-center justify-center text-sm flex-shrink-0">
+        <div className="w-8 h-8 rounded-lg bg-grey-bg flex items-center justify-center text-sm flex-shrink-0">
           {mission.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-bold text-ink text-xs">{mission.name}</div>
-          <div className="text-[10px] text-ink-soft font-semibold">
+          <div className="font-bold text-navy text-xs">{mission.name}</div>
+          <div className="text-[10px] text-muted font-semibold">
             Verifikasi: {mission.verify_type} · Sebelum {mission.deadline_time}
           </div>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          <div className="font-mono-brand text-[11px] font-bold text-amber">
-            ⭐{mission.stars}
+          <div className="font-display font-bold text-[11px] text-yellow">
+            ★{mission.stars}
           </div>
           {/* Toggle aktif */}
           <button
@@ -233,7 +232,7 @@ export function OrtuMissionCard({
               })
             }
             className={`w-8 h-[19px] rounded-full relative transition-colors ${
-              mission.active ? "bg-hijau" : "bg-[#e3e8f0]"
+              mission.active ? "bg-green" : "bg-border-color"
             }`}
             title={mission.active ? "Nonaktifkan" : "Aktifkan"}
           >
@@ -246,7 +245,7 @@ export function OrtuMissionCard({
           {/* Tombol edit */}
           <button
             onClick={() => setEditing(true)}
-            className="text-ink-soft hover:text-ink p-0.5"
+            className="text-muted hover:text-navy p-0.5"
             title="Edit misi"
           >
             <Pencil size={13} />
@@ -254,7 +253,7 @@ export function OrtuMissionCard({
           {/* Tombol hapus */}
           <button
             onClick={() => setConfirmDelete(true)}
-            className="text-ink-soft hover:text-stempel p-0.5"
+            className="text-muted hover:text-red-danger p-0.5"
             title="Hapus misi"
           >
             <Trash2 size={13} />
@@ -268,7 +267,7 @@ export function OrtuMissionCard({
             className={`w-5 h-5 rounded-md flex items-center justify-center text-[8.5px] font-bold ${
               mission.days.includes(i)
                 ? "bg-hijau-soft text-hijau"
-                : "bg-[#f4f6fa] text-[#c3ccdc]"
+                : "bg-grey-bg text-muted"
             }`}
           >
             {d[0]}

@@ -23,14 +23,14 @@ export function ApprovalButtons({ submissionId }: { submissionId: string }) {
       <button
         disabled={busy}
         onClick={() => act("reject")}
-        className="flex-1 border border-line text-ink-soft font-bold text-[10.5px] py-1.5 rounded-lg disabled:opacity-60"
+        className="flex-1 border border-border-color text-muted font-bold text-[10.5px] py-1.5 rounded-lg disabled:opacity-60"
       >
         Tolak
       </button>
       <button
         disabled={busy}
         onClick={() => act("approve")}
-        className="flex-1 bg-hijau text-white font-bold text-[10.5px] py-1.5 rounded-lg disabled:opacity-60"
+        className="flex-1 bg-green text-white font-bold text-[10.5px] py-1.5 rounded-lg disabled:opacity-60"
       >
         Setujui ✓
       </button>

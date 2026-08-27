@@ -59,7 +59,7 @@ export function MissionCard({
   };
 
   return (
-    <div className="bg-card border border-line rounded-2xl p-3.5 shadow-sm">
+    <div className="bg-white rounded-2xl p-3.5 card-shadow">
       <div className="flex items-start gap-3">
         <div
           className={`w-9 h-9 rounded-xl ${TYPE_BG[mission.verify_type]} flex items-center justify-center text-lg flex-shrink-0`}
@@ -67,12 +67,12 @@ export function MissionCard({
           {mission.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-bold text-ink text-[13.5px]">{mission.name}</div>
-          <div className="text-[11px] text-ink-soft font-medium">
-            Jam berapa pun sebelum {mission.deadline_time}
+          <div className="font-bold text-navy text-sm">{mission.name}</div>
+          <div className="text-[11px] text-muted font-semibold">
+            Sebelum {mission.deadline_time}
           </div>
         </div>
-        <div className="font-mono-brand text-[11px] font-bold text-amber">+{mission.stars}⭐</div>
+        <div className="font-display font-bold text-[11px] text-yellow">+{mission.stars}★</div>
       </div>
 
       {!submission && mission.verify_type === "foto" && (
@@ -88,7 +88,7 @@ export function MissionCard({
           <button
             disabled={busy}
             onClick={() => fileRef.current?.click()}
-            className="mt-2.5 w-full bg-coral text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 disabled:opacity-60"
+            className="mt-2.5 w-full bg-orange text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 btn-chunky disabled:opacity-60"
           >
             {busy ? <Loader2 size={13} className="animate-spin" /> : <Camera size={13} />}
             {busy ? "Memproses..." : "Upload Bukti Foto"}
@@ -108,7 +108,7 @@ export function MissionCard({
           />
           <button
             onClick={() => quizFileRef.current?.click()}
-            className="mt-2.5 w-full bg-amber text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5"
+            className="mt-2.5 w-full bg-brand-blue text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 btn-chunky"
           >
             <Brain size={13} /> Upload Materi
           </button>
@@ -118,14 +118,14 @@ export function MissionCard({
       {!submission && mission.verify_type === "rekam" && (
         <button
           onClick={() => setRecordOpen(true)}
-          className="mt-2.5 w-full bg-ungu text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5"
+          className="mt-2.5 w-full bg-ungu text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-1.5 btn-chunky"
         >
           <Mic size={13} /> Mulai Rekam
         </button>
       )}
 
       {submission?.status === "pending" && (
-        <div className="mt-2.5 inline-flex items-center gap-1.5 bg-amber-soft text-[#8a6a05] text-[10.5px] font-bold px-2.5 py-1.5 rounded-full">
+        <div className="mt-2.5 inline-flex items-center gap-1.5 bg-amber-soft text-[#8A6100] text-[10.5px] font-bold px-2.5 py-1.5 rounded-full">
           <Clock size={12} /> Menunggu Ortu
         </div>
       )}
@@ -141,7 +141,7 @@ export function MissionCard({
       )}
       {submission?.status === "auto_done" && (
         <div className="mt-2.5 inline-flex items-center gap-1.5 bg-ungu-soft text-ungu text-[10.5px] font-bold px-2.5 py-1.5 rounded-full">
-          🤖 Auto dinilai · {submission.score}/{submission.quiz_json?.length} · +{submission.stars_awarded}⭐
+          🤖 Auto dinilai · {submission.score}/{submission.quiz_json?.length} · +{submission.stars_awarded}★
         </div>
       )}
 

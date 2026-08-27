@@ -19,7 +19,7 @@ export function RewardToggle({ id, active, isWali = false }: { id: string; activ
           router.refresh();
         })
       }
-      className={`w-8 h-[19px] rounded-full relative transition-colors ${active ? "bg-hijau" : "bg-[#e3e8f0]"}`}
+      className={`w-8 h-[19px] rounded-full relative transition-colors ${active ? "bg-green" : "bg-border-color"}`}
     >
       <span
         className={`absolute top-[2px] w-[15px] h-[15px] bg-white rounded-full transition-transform ${

@@ -86,39 +86,41 @@ export function QuizModal({
           {phase === "loading" && (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-10">
               {preview && <img src={preview} alt="materi" className="w-16 h-16 object-cover rounded-xl" />}
-              <Loader2 size={30} className="animate-spin text-amber" />
-              <div className="font-bold text-ink text-sm">Membuat soal dari materimu…</div>
-              <div className="text-xs text-ink-soft">Ditenagai Claude, tunggu sebentar</div>
+              <Loader2 size={30} className="animate-spin text-brand-blue" />
+              <div className="font-bold text-navy text-sm">Membuat soal dari materimu…</div>
+              <div className="text-xs text-muted">Ditenagai Claude, tunggu sebentar</div>
             </div>
           )}
           {phase === "error" && (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-4 py-10">
-              <AlertCircle size={30} className="text-stempel" />
-              <div className="text-sm font-bold text-ink">{error}</div>
-              <button onClick={onClose} className="text-xs font-bold text-coral mt-2">
+              <AlertCircle size={30} className="text-red-danger" />
+              <div className="text-sm font-bold text-navy">{error}</div>
+              <button onClick={onClose} className="text-xs font-bold text-orange mt-2">
                 Tutup
               </button>
             </div>
           )}
           {phase === "soal" && quiz && (
             <div>
-              <div className="text-[10.5px] font-bold text-ink-soft mb-1.5">
+              <div className="text-[10.5px] font-bold text-muted mb-1.5">
                 Soal {qi + 1} dari {quiz.length}
               </div>
-              <div className="h-1.5 bg-[#eef1f6] rounded-full overflow-hidden mb-4">
+              <div className="h-1.5 bg-grey-bg rounded-full overflow-hidden mb-4">
                 <div
-                  className="h-full bg-amber rounded-full transition-all"
+                  className="h-full bg-brand-blue rounded-full transition-all"
                   style={{ width: `${((qi + 1) / quiz.length) * 100}%` }}
                 />
               </div>
-              <div className="font-bold text-ink text-[15px] mb-4">{quiz[qi].question}</div>
+              <div className="font-bold text-navy text-[15px] mb-4">{quiz[qi].question}</div>
               <div className="space-y-2">
                 {quiz[qi].options.map((opt, i) => (
                   <button
                     key={i}
                     onClick={() => setSel(i)}
-                    className={`w-full text-left border rounded-xl px-3.5 py-3 text-[12.5px] font-semibold ${
-                      sel === i ? "border-amber bg-amber-soft text-[#8a6a05]" : "border-line text-ink"
+                    className={`w-full text-left border-2 rounded-xl px-3.5 py-3 text-[12.5px] font-semibold ${
+                      sel === i
+                        ? "border-brand-blue bg-[#BFE4F7] text-navy"
+                        : "border-border-color text-navy"
                     }`}
                   >
                     {opt}
@@ -128,7 +130,7 @@ export function QuizModal({
               <button
                 disabled={sel === null}
                 onClick={next}
-                className="w-full mt-5 bg-amber disabled:bg-[#e3e8f0] text-white font-bold text-xs py-3 rounded-xl"
+                className="w-full mt-5 bg-brand-blue disabled:bg-border-color text-white font-bold text-xs py-3 rounded-xl btn-chunky"
               >
                 {qi === quiz.length - 1 ? "Selesai" : "Lanjut"}
               </button>
@@ -136,15 +138,15 @@ export function QuizModal({
           )}
           {phase === "hasil" && (
             <div className="flex flex-col items-center text-center gap-2 pt-8">
-              <div className="text-xs font-bold text-ink-soft">Kuis selesai</div>
-              <div className="font-mono-brand text-4xl font-bold text-ink">
+              <div className="text-xs font-bold text-muted">Kuis selesai</div>
+              <div className="font-mono-brand text-4xl font-bold text-navy">
                 {answers.filter(Boolean).length}/{quiz?.length}
               </div>
-              <div className="text-xs font-bold text-ink-soft">Jawaban benar</div>
+              <div className="text-xs font-bold text-muted">Jawaban benar</div>
               <div className="bg-ungu-soft text-ungu font-bold text-xs px-3.5 py-2 rounded-full mt-2">
                 🤖 Auto dinilai · +{mission.stars} Bintang masuk
               </div>
-              <button onClick={onDone} className="bg-coral text-white font-bold text-xs py-2.5 px-6 rounded-xl mt-5">
+              <button onClick={onDone} className="bg-orange text-white font-bold text-xs py-2.5 px-6 rounded-xl mt-5 btn-chunky">
                 Kembali ke Beranda
               </button>
             </div>

@@ -13,7 +13,7 @@ export function LogoutButton() {
         router.push("/masuk");
         router.refresh();
       }}
-      className="text-[11px] text-ink-soft"
+      className="text-[11px] text-muted"
     >
       Keluar
     </button>

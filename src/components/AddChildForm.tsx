@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 
-const COLORS = ["#FF7A59", "#6C63E0", "#3F9142", "#C97F0B", "#D64545"];
+const COLORS = ["#3EA8DE", "#6B4FD1", "#35C0A0", "#F58634", "#E4573C"];
 
 export function AddChildForm() {
   const router = useRouter();
@@ -45,7 +45,7 @@ export function AddChildForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="bg-coral text-white font-bold text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1"
+        className="bg-orange text-white font-bold text-[11px] px-3 py-1.5 rounded-full flex items-center gap-1"
       >
         <Plus size={12} /> Tambah Anak
       </button>
@@ -53,19 +53,19 @@ export function AddChildForm() {
   }
 
   return (
-    <div className="bg-white border border-dashed border-[#c3ccdc] rounded-2xl p-3.5 space-y-3">
+    <div className="bg-white border border-dashed border-border-color rounded-2xl p-3.5 space-y-3">
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="Nama anak"
-        className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
+        className="w-full border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none"
       />
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email anak"
-        className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
+        className="w-full border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none"
       />
       <input
         type="password"
@@ -73,7 +73,7 @@ export function AddChildForm() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Kata sandi (min. 6 karakter)"
         minLength={6}
-        className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
+        className="w-full border border-border-color rounded-xl px-3 py-2 text-xs font-semibold focus:border-navy focus:outline-none"
       />
       <div className="flex gap-2">
         {COLORS.map((c) => (
@@ -81,12 +81,12 @@ export function AddChildForm() {
             key={c}
             onClick={() => setColor(c)}
             className="w-7 h-7 rounded-full border-2"
-            style={{ background: c, borderColor: color === c ? "#1E2A4A" : "transparent" }}
+            style={{ background: c, borderColor: color === c ? "#17395B" : "transparent" }}
           />
         ))}
       </div>
-      {err && <div className="text-stempel text-[11px] font-semibold">{err}</div>}
-      <button disabled={busy} onClick={submit} className="w-full bg-coral text-white font-bold text-xs py-2.5 rounded-lg disabled:opacity-60">
+      {err && <div className="text-red-danger text-[11px] font-semibold">{err}</div>}
+      <button disabled={busy} onClick={submit} className="w-full bg-orange text-white font-bold text-xs py-2.5 rounded-xl btn-chunky disabled:opacity-60">
         {busy ? "Menyimpan..." : "Simpan Anak"}
       </button>
     </div>

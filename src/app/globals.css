@@ -1,24 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #1e2a4a;
-  --ink-soft: #4a5578;
-  --paper: #eaf0f6;
-  --paper-line: #d7e1ec;
+  /* Legacy tokens — values updated to match new design palette */
+  --ink: #17395B;
+  --ink-soft: #527193;
+  --paper: #F6F9FC;
+  --paper-line: #E1EAF2;
   --card: #ffffff;
-  --stempel: #d64545;
-  --stempel-soft: #fbe8e8;
-  --bintang: #f2b705;
-  --hijau: #3f9142;
-  --hijau-soft: #e4f3e5;
-  --coral: #ff7a59;
-  --coral-soft: #ffe9e1;
-  --amber: #c97f0b;
-  --amber-soft: #fef3d6;
-  --ungu: #6c63e0;
-  --ungu-soft: #eceafb;
-  --line: #e3e8f0;
-  --bg-neutral: #dce1e8;
+  --stempel: #E4573C;
+  --stempel-soft: #FFF0EC;
+  --bintang: #F5C33B;
+  --hijau: #35C0A0;
+  --hijau-soft: #C8F0E5;
+  --coral: #F58634;
+  --coral-soft: #FFD9B8;
+  --amber: #F5A623;
+  --amber-soft: #FFE9B0;
+  --ungu: #6B4FD1;
+  --ungu-soft: #E2D9FB;
+  --line: #E1EAF2;
+  --bg-neutral: #EEF3F7;
 
   /* Design tokens baru */
   --brand-blue: #3EA8DE;
