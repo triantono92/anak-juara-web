@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getCurrentAppUser } from "@/lib/auth";
+import { requireEditAccess } from "@/lib/auth";
 import type { RewardCategory } from "@/lib/types";
 
 export async function addReward(input: {
@@ -11,18 +11,13 @@ export async function addReward(input: {
   starsCost: number;
   assignedTo: string;
 }) {
-  const user = await getCurrentAppUser();
-  if (!user || user.role !== "ortu") throw new Error("Belum login sebagai ortu.");
-
+  const user = await requireEditAccess();
   const supabase = await createClient();
-  const me = { family_id: user.familyId };
-
-  const icon = "";
 
   const { error } = await supabase.from("rewards").insert({
-    family_id: me.family_id,
+    family_id: user.familyId,
     name: input.name,
-    icon,
+    icon: "",
     category: input.category,
     stars_cost: input.starsCost,
     assigned_to: input.assignedTo,
@@ -32,9 +27,7 @@ export async function addReward(input: {
 }
 
 export async function toggleReward(id: string, active: boolean) {
-  const user = await getCurrentAppUser();
-  if (!user || user.role !== "ortu") throw new Error("Belum login sebagai ortu.");
-
+  const user = await requireEditAccess();
   const supabase = await createClient();
 
   // Defense-in-depth: verifikasi reward milik keluarga requester sebelum update.

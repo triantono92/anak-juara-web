@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getParentUser } from "@/lib/auth";
+import { requireEditAccess } from "@/lib/auth";
 import type { MissionKategori } from "@/lib/types";
 
 export async function addScheduleBlock(input: {
@@ -14,19 +14,12 @@ export async function addScheduleBlock(input: {
   kategori: MissionKategori;
   missionIds: string[];
 }) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Unauthorized");
+  const user = await requireEditAccess();
   const supabase = await createClient();
-  const { data: me } = await supabase
-    .from("app_users")
-    .select("family_id")
-    .eq("id", user.id)
-    .single();
-  if (!me) throw new Error("Akun tidak ditemukan");
 
   const { error } = await supabase.from("schedule_blocks").insert({
     child_id: input.childId,
-    family_id: me.family_id,
+    family_id: user.familyId,
     hari: input.hari,
     jam_mulai: input.jamMulai,
     durasi_menit: input.durasiMenit,
@@ -49,8 +42,7 @@ export async function updateScheduleBlock(
     missionIds: string[];
   }
 ) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Unauthorized");
+  await requireEditAccess();
   const supabase = await createClient();
   const { error } = await supabase
     .from("schedule_blocks")
@@ -68,8 +60,7 @@ export async function updateScheduleBlock(
 }
 
 export async function deleteScheduleBlock(id: string) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Unauthorized");
+  await requireEditAccess();
   const supabase = await createClient();
   await supabase.from("schedule_blocks").delete().eq("id", id);
   revalidatePath("/ortu/jadwal");
@@ -77,35 +68,22 @@ export async function deleteScheduleBlock(id: string) {
 }
 
 export async function toggleScheduleBlock(id: string, aktif: boolean) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Unauthorized");
+  await requireEditAccess();
   const supabase = await createClient();
-  await supabase
-    .from("schedule_blocks")
-    .update({ aktif: !aktif })
-    .eq("id", id);
+  await supabase.from("schedule_blocks").update({ aktif: !aktif }).eq("id", id);
   revalidatePath("/ortu/jadwal");
 }
 
-export async function copyBlocksToWeekdays(
-  childId: string,
-  fromHari: number
-) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Unauthorized");
+export async function copyBlocksToWeekdays(childId: string, fromHari: number) {
+  const user = await requireEditAccess();
   const supabase = await createClient();
-  const { data: me } = await supabase
-    .from("app_users")
-    .select("family_id")
-    .eq("id", user.id)
-    .single();
-  if (!me) throw new Error("Akun tidak ditemukan");
 
   const { data: sourceBlocks } = await supabase
     .from("schedule_blocks")
     .select("*")
     .eq("child_id", childId)
-    .eq("hari", fromHari);
+    .eq("hari", fromHari)
+    .eq("family_id", user.familyId); // pastikan hanya blok keluarga sendiri
 
   if (!sourceBlocks?.length) return;
 

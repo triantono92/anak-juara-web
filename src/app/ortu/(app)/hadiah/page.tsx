@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getParentUser } from "@/lib/auth";
+import { getCurrentAppUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { RewardToggle } from "@/components/RewardToggle";
 import { RewardForm } from "@/components/RewardForm";
@@ -11,8 +11,9 @@ export default async function HadiahManagerPage({
 }: {
   searchParams: Promise<{ filter?: string }>;
 }) {
-  const user = await getParentUser();
-  if (!user) redirect("/masuk");
+  const user = await getCurrentAppUser();
+  if (!user || user.role !== "ortu") redirect("/masuk");
+  const isWali = user.parentRole === "wali";
 
   const params = await searchParams;
   const filter = params.filter ?? "semua";
@@ -167,7 +168,7 @@ export default async function HadiahManagerPage({
                     : ""}
                 </div>
               </div>
-              <RewardToggle id={r.id} active={r.active} />
+              <RewardToggle id={r.id} active={r.active} isWali={isWali} />
             </div>
           );
         })}
@@ -179,7 +180,7 @@ export default async function HadiahManagerPage({
         )}
 
         {/* Tombol tambah */}
-        <RewardForm kids={kids} />
+        {!isWali && <RewardForm kids={kids} />}
       </div>
     </div>
   );

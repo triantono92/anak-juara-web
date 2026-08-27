@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
-import { getParentUser } from "@/lib/auth";
+import { getCurrentAppUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { Mission, AppUser } from "@/lib/types";
 import { OrtuMisiClient } from "@/components/OrtuMisiClient";
 
 export default async function OrtuMisiPage() {
-  const user = await getParentUser();
-  if (!user) redirect("/masuk");
+  const user = await getCurrentAppUser();
+  if (!user || user.role !== "ortu") redirect("/masuk");
+  const isWali = user.parentRole === "wali";
 
   const supabase = await createClient();
   const [{ data: missions }, { data: family }] = await Promise.all([
@@ -62,7 +63,7 @@ export default async function OrtuMisiPage() {
         </div>
       </div>
 
-      <OrtuMisiClient missions={missionList} kids={kids} />
+      <OrtuMisiClient missions={missionList} kids={kids} isWali={isWali} />
     </div>
   );
 }

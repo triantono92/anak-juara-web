@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { getParentUser } from "@/lib/auth";
+import { requireEditAccess } from "@/lib/auth";
 import type { MissionKategori, MissionGrup, VerifyType } from "@/lib/types";
 
 type MissionInput = {
@@ -18,19 +18,11 @@ type MissionInput = {
 };
 
 export async function addMission(input: MissionInput) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Belum login sebagai ortu.");
-
+  const user = await requireEditAccess();
   const supabase = await createClient();
-  const { data: me } = await supabase
-    .from("app_users")
-    .select("family_id")
-    .eq("id", user.id)
-    .single();
-  if (!me) throw new Error("Akun ortu tidak ditemukan.");
 
   const { error } = await supabase.from("missions").insert({
-    family_id: me.family_id,
+    family_id: user.familyId,
     name: input.name,
     icon: input.icon,
     verify_type: input.verifyType,
@@ -42,15 +34,13 @@ export async function addMission(input: MissionInput) {
     grup: input.grup ?? "Harian",
   });
   if (error) throw new Error(error.message);
-
   revalidatePath("/ortu/misi");
 }
 
 export async function updateMission(id: string, input: MissionInput) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Belum login sebagai ortu.");
-
+  await requireEditAccess();
   const supabase = await createClient();
+
   const { error } = await supabase
     .from("missions")
     .update({
@@ -66,31 +56,24 @@ export async function updateMission(id: string, input: MissionInput) {
     })
     .eq("id", id);
   if (error) throw new Error(error.message);
-
   revalidatePath("/ortu/misi");
 }
 
 export async function deleteMission(id: string) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Belum login sebagai ortu.");
-
+  await requireEditAccess();
   const supabase = await createClient();
   const { error } = await supabase.from("missions").delete().eq("id", id);
   if (error) throw new Error(error.message);
-
   revalidatePath("/ortu/misi");
 }
 
 export async function toggleMissionActive(id: string, active: boolean) {
-  const user = await getParentUser();
-  if (!user) throw new Error("Belum login sebagai ortu.");
-
+  await requireEditAccess();
   const supabase = await createClient();
   const { error } = await supabase
     .from("missions")
     .update({ active: !active })
     .eq("id", id);
   if (error) throw new Error(error.message);
-
   revalidatePath("/ortu/misi");
 }

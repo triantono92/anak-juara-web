@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import type { ParentRole } from "@/lib/types";
 
 export type AppUserSession = {
   id: string;
@@ -8,6 +9,7 @@ export type AppUserSession = {
   email: string | null;
   avatarColor: string;
   stars: number;
+  parentRole: ParentRole | null; // hanya untuk role === "ortu"
 };
 
 /**
@@ -24,7 +26,7 @@ export async function getCurrentAppUser(): Promise<AppUserSession | null> {
 
   const { data } = await supabase
     .from("app_users")
-    .select("id, family_id, role, name, avatar_color, stars")
+    .select("id, family_id, role, name, avatar_color, stars, parent_role")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -37,7 +39,23 @@ export async function getCurrentAppUser(): Promise<AppUserSession | null> {
     email: user.email ?? null,
     avatarColor: data.avatar_color,
     stars: data.stars ?? 0,
+    parentRole: (data.parent_role as ParentRole | null) ?? null,
   };
+}
+
+/**
+ * Pastikan user adalah ortu dengan hak edit penuh (bukan Wali).
+ * Lempar error jika belum login, bukan ortu, atau role-nya "wali".
+ * Dipakai di semua server action yang mengubah master data
+ * (misi, hadiah, jadwal, anggota).
+ */
+export async function requireEditAccess(): Promise<AppUserSession> {
+  const u = await getCurrentAppUser();
+  if (!u || u.role !== "ortu") throw new Error("Belum login sebagai ortu.");
+  if (u.parentRole === "wali") {
+    throw new Error("Wali hanya bisa menyetujui — tidak bisa mengubah misi, hadiah, jadwal, atau data anggota.");
+  }
+  return u;
 }
 
 // Compat wrappers — dipakai oleh halaman anak dan API route yang menggunakan

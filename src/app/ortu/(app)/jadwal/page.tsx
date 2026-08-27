@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getParentUser } from "@/lib/auth";
+import { getCurrentAppUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import type { AppUser, ScheduleBlock, Mission } from "@/lib/types";
 import { OrtuJadwalClient } from "@/components/OrtuJadwalClient";
@@ -15,8 +15,9 @@ export default async function OrtuJadwalPage({
 }: {
   searchParams: Promise<{ hari?: string; childId?: string }>;
 }) {
-  const user = await getParentUser();
-  if (!user) redirect("/masuk");
+  const user = await getCurrentAppUser();
+  if (!user || user.role !== "ortu") redirect("/masuk");
+  const isWali = user.parentRole === "wali";
 
   const params = await searchParams;
 
@@ -107,6 +108,7 @@ export default async function OrtuJadwalPage({
           selectedChildId={selectedChildId}
           selectedHari={selectedHari}
           missions={missionList}
+          isWali={isWali}
         />
       )}
     </div>

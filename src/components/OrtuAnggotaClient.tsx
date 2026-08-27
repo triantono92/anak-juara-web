@@ -22,6 +22,8 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
   // Ortu form
   const [parentName, setParentName] = useState("");
   const [parentEmail, setParentEmail] = useState("");
+  const [parentPassword, setParentPassword] = useState("");
+  const [parentConfirm, setParentConfirm] = useState("");
   const [parentRole, setParentRole] = useState<ParentRole>("ayah");
 
   const [busy, setBusy] = useState(false);
@@ -45,9 +47,12 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
       } else {
         if (!parentName.trim()) throw new Error("Isi nama orang tua.");
         if (!parentEmail.trim()) throw new Error("Isi email.");
+        if (parentPassword.length < 6) throw new Error("Kata sandi minimal 6 karakter.");
+        if (parentPassword !== parentConfirm) throw new Error("Konfirmasi kata sandi tidak cocok.");
         await addParent({
           name: parentName.trim(),
           email: parentEmail.trim(),
+          password: parentPassword,
           parentRole,
         });
       }
@@ -80,9 +85,7 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
       {tab === "anak" ? (
         <>
           <div>
-            <label className="text-xs font-bold text-navy mb-1.5 block">
-              Nama Anak
-            </label>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Nama Anak</label>
             <input
               value={childName}
               onChange={(e) => setChildName(e.target.value)}
@@ -92,9 +95,7 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="text-xs font-bold text-navy mb-1.5 block">
-              Umur
-            </label>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Umur</label>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setChildAge((a) => Math.max(4, a - 1))}
@@ -115,18 +116,14 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="text-xs font-bold text-navy mb-1.5 block">
-              Warna Avatar
-            </label>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Warna Avatar</label>
             <div className="flex gap-3">
               {AVATAR_COLORS.map((c) => (
                 <button
                   key={c}
                   onClick={() => setChildColor(c)}
                   className={`w-10 h-10 rounded-full border-4 transition-all ${
-                    childColor === c
-                      ? "border-navy scale-110"
-                      : "border-transparent"
+                    childColor === c ? "border-navy scale-110" : "border-transparent"
                   }`}
                   style={{ backgroundColor: c }}
                 />
@@ -135,9 +132,7 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="text-xs font-bold text-navy mb-1.5 block">
-              Email Anak
-            </label>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Email Anak</label>
             <input
               type="email"
               value={childEmail}
@@ -164,9 +159,7 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
       ) : (
         <>
           <div>
-            <label className="text-xs font-bold text-navy mb-1.5 block">
-              Nama
-            </label>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Nama</label>
             <input
               value={parentName}
               onChange={(e) => setParentName(e.target.value)}
@@ -176,9 +169,7 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="text-xs font-bold text-navy mb-1.5 block">
-              Email
-            </label>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Email</label>
             <input
               type="email"
               value={parentEmail}
@@ -190,8 +181,38 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
 
           <div>
             <label className="text-xs font-bold text-navy mb-1.5 block">
-              Peran
+              Kata Sandi (min. 6 karakter)
             </label>
+            <input
+              type="password"
+              value={parentPassword}
+              onChange={(e) => setParentPassword(e.target.value)}
+              placeholder="••••••"
+              minLength={6}
+              className="w-full border-2 border-border-color rounded-xl px-3 py-2.5 text-sm font-semibold text-navy outline-none focus:border-navy"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Konfirmasi Kata Sandi</label>
+            <input
+              type="password"
+              value={parentConfirm}
+              onChange={(e) => setParentConfirm(e.target.value)}
+              placeholder="••••••"
+              className={`w-full border-2 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy outline-none focus:border-navy ${
+                parentConfirm && parentConfirm !== parentPassword
+                  ? "border-red-danger"
+                  : "border-border-color"
+              }`}
+            />
+            {parentConfirm && parentConfirm !== parentPassword && (
+              <p className="text-red-danger text-[11px] mt-1">Kata sandi tidak cocok.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-navy mb-1.5 block">Peran</label>
             <div className="flex gap-2">
               {(["ayah", "bunda", "wali"] as ParentRole[]).map((r) => (
                 <button
@@ -207,6 +228,11 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
                 </button>
               ))}
             </div>
+            {parentRole === "wali" && (
+              <p className="text-muted text-[11px] mt-1.5">
+                Wali hanya bisa menyetujui misi & penukaran — tidak bisa mengubah misi, hadiah, atau jadwal.
+              </p>
+            )}
           </div>
         </>
       )}
@@ -224,8 +250,11 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function OrtuAnggotaClient() {
+export function OrtuAnggotaClient({ isWali = false }: { isWali?: boolean }) {
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  if (isWali) return null; // Wali tidak bisa menambah anggota
+
   return (
     <>
       <button
