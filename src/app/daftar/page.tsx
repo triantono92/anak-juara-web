@@ -40,19 +40,21 @@ export default function DaftarPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: signUp.user.id,
         familyName: `Keluarga ${name.split(" ")[0]}`,
         parentName: name,
         parentRole: role,
       }),
     });
-    setBusy(false);
     if (!res.ok) {
+      await supabase.auth.signOut();
+      setBusy(false);
       const d = await res.json().catch(() => ({}));
       setErr(d.error || "Gagal membuat keluarga.");
       return;
     }
-    router.push("/ortu/persetujuan");
+    await supabase.auth.signOut();
+    setBusy(false);
+    router.push("/masuk");
     router.refresh();
   };
 

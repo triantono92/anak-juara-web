@@ -16,7 +16,8 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
   const [childName, setChildName] = useState("");
   const [childAge, setChildAge] = useState(8);
   const [childColor, setChildColor] = useState(AVATAR_COLORS[0]);
-  const [childPin, setChildPin] = useState("");
+  const [childEmail, setChildEmail] = useState("");
+  const [childPassword, setChildPassword] = useState("");
 
   // Ortu form
   const [parentName, setParentName] = useState("");
@@ -32,12 +33,14 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
     try {
       if (tab === "anak") {
         if (!childName.trim()) throw new Error("Isi nama anak.");
-        if (childPin.length < 4) throw new Error("PIN minimal 4 digit.");
+        if (!childEmail.trim()) throw new Error("Isi email anak.");
+        if (childPassword.length < 6) throw new Error("Kata sandi minimal 6 karakter.");
         await addChild({
           name: childName.trim(),
           age: childAge,
           avatarColor: childColor,
-          pin: childPin,
+          email: childEmail.trim(),
+          password: childPassword,
         });
       } else {
         if (!parentName.trim()) throw new Error("Isi nama orang tua.");
@@ -133,18 +136,28 @@ function AddAnggotaSheet({ onClose }: { onClose: () => void }) {
 
           <div>
             <label className="text-xs font-bold text-navy mb-1.5 block">
-              PIN Awal (min. 4 digit)
+              Email Anak
+            </label>
+            <input
+              type="email"
+              value={childEmail}
+              onChange={(e) => setChildEmail(e.target.value)}
+              placeholder="email@contoh.com"
+              className="w-full border-2 border-border-color rounded-xl px-3 py-2.5 text-sm font-semibold text-navy outline-none focus:border-navy"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-navy mb-1.5 block">
+              Kata Sandi (min. 6 karakter)
             </label>
             <input
               type="password"
-              inputMode="numeric"
-              maxLength={6}
-              value={childPin}
-              onChange={(e) =>
-                setChildPin(e.target.value.replace(/\D/g, ""))
-              }
-              placeholder="••••"
-              className="w-full border-2 border-border-color rounded-xl px-3 py-2.5 text-sm font-semibold text-navy outline-none focus:border-navy tracking-widest"
+              value={childPassword}
+              onChange={(e) => setChildPassword(e.target.value)}
+              placeholder="••••••"
+              minLength={6}
+              className="w-full border-2 border-border-color rounded-xl px-3 py-2.5 text-sm font-semibold text-navy outline-none focus:border-navy"
             />
           </div>
         </>

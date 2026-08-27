@@ -10,15 +10,15 @@ export function AddChildForm() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
-  const [pin, setPin] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [color, setColor] = useState(COLORS[0]);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
 
   const submit = async () => {
-    if (!name.trim() || !username.trim() || pin.length !== 4) {
-      setErr("Lengkapi nama, username, dan PIN 4 digit.");
+    if (!name.trim() || !email.trim() || password.length < 6) {
+      setErr("Lengkapi nama, email, dan kata sandi (min. 6 karakter).");
       return;
     }
     setBusy(true);
@@ -26,7 +26,7 @@ export function AddChildForm() {
     const res = await fetch("/api/family/add-child", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, username, pin, avatarColor: color }),
+      body: JSON.stringify({ name, email, password, avatarColor: color }),
     });
     setBusy(false);
     if (!res.ok) {
@@ -35,8 +35,8 @@ export function AddChildForm() {
       return;
     }
     setName("");
-    setUsername("");
-    setPin("");
+    setEmail("");
+    setPassword("");
     setOpen(false);
     router.refresh();
   };
@@ -61,15 +61,18 @@ export function AddChildForm() {
         className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
       />
       <input
-        value={username}
-        onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s+/g, ""))}
-        placeholder="Username (untuk login)"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email anak"
         className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
       />
       <input
-        value={pin}
-        onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
-        placeholder="PIN 4 digit"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Kata sandi (min. 6 karakter)"
+        minLength={6}
         className="w-full border border-line rounded-lg px-3 py-2 text-xs font-semibold"
       />
       <div className="flex gap-2">

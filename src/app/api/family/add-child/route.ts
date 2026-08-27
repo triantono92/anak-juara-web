@@ -1,38 +1,65 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getParentUser } from "@/lib/auth";
-import { hashPin } from "@/lib/childSession";
 
-// POST /api/family/add-child — ortu menambahkan akun anak (username + PIN 4 digit).
-// app_users tidak punya RLS policy INSERT (lihat schema.sql), jadi wajib lewat
-// route ini yang memverifikasi ortu lebih dulu lalu pakai service-role client.
+// POST /api/family/add-child — ortu menambahkan akun anak (email + password).
+// Membuat akun Supabase Auth untuk anak lalu menyimpan profil di app_users.
 export async function POST(req: NextRequest) {
   const user = await getParentUser();
   if (!user) return NextResponse.json({ error: "Belum login sebagai ortu." }, { status: 401 });
 
-  const { name, username, pin, avatarColor } = await req.json();
-  if (!name || !username || !pin || pin.length !== 4) {
-    return NextResponse.json({ error: "name, username, dan pin (4 digit) wajib diisi." }, { status: 400 });
+  const { name, email, password, avatarColor, age } = await req.json();
+  if (!name || !email || !password || password.length < 6) {
+    return NextResponse.json(
+      { error: "name, email, dan password (min. 6 karakter) wajib diisi." },
+      { status: 400 },
+    );
   }
 
   const supabase = createServiceClient();
-  const { data: me } = await supabase.from("app_users").select("family_id").eq("id", user.id).single();
+
+  // Ambil family_id ortu yang sedang login
+  const { data: me } = await supabase
+    .from("app_users")
+    .select("family_id")
+    .eq("id", user.id)
+    .single();
   if (!me) return NextResponse.json({ error: "Akun ortu tidak ditemukan." }, { status: 404 });
 
-  const { data: child, error } = await supabase
+  // Buat akun Supabase Auth untuk anak
+  const { data: authData, error: authErr } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true, // langsung aktif tanpa perlu verifikasi email
+  });
+  if (authErr || !authData.user) {
+    return NextResponse.json(
+      { error: authErr?.message ?? "Gagal membuat akun anak." },
+      { status: 500 },
+    );
+  }
+
+  const { data: child, error: insertErr } = await supabase
     .from("app_users")
     .insert({
+      id: authData.user.id,
       family_id: me.family_id,
       name,
       role: "anak",
-      username,
-      auth_method: "pin",
-      pin_hash: hashPin(pin),
-      avatar_color: avatarColor || "#FF7A59",
+      username: name.toLowerCase().replace(/\s+/g, "."),
+      auth_method: "password",
+      avatar_color: avatarColor || "#3EA8DE",
+      age: age ?? null,
+      member_status: "aktif",
     })
-    .select("id, name, username, avatar_color, stars")
+    .select("id, name, avatar_color, stars")
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (insertErr) {
+    // Rollback: hapus auth user yang baru dibuat
+    await supabase.auth.admin.deleteUser(authData.user.id);
+    return NextResponse.json({ error: insertErr.message }, { status: 500 });
+  }
+
   return NextResponse.json(child);
 }

@@ -11,7 +11,7 @@ export function LogoutOrtuButton() {
     <button
       onClick={async () => {
         await supabase.auth.signOut();
-        router.push("/ortu/login");
+        router.push("/masuk");
         router.refresh();
       }}
       className="opacity-80"

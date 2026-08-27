@@ -74,11 +74,8 @@ export default async function AnggotaPage() {
   const kids = members.filter((m) => m.role === "anak");
   const parents = members.filter((m) => m.role === "ortu");
 
-  // Find current user's app_user record
-  const currentMember = members.find((m) => {
-    // Match by supabase auth user id or by email
-    return m.username && user.email && m.username === user.email.split("@")[0];
-  });
+  // Find current user's app_user record by id
+  const currentMember = members.find((m) => m.id === user!.id);
 
   return (
     <div className="flex flex-col min-h-full">

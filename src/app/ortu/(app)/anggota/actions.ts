@@ -3,14 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { createServiceClient, createClient } from "@/lib/supabase/server";
 import { getParentUser } from "@/lib/auth";
-import { hashPin } from "@/lib/childSession";
 import type { ParentRole } from "@/lib/types";
 
 export async function addChild(input: {
   name: string;
   age: number;
   avatarColor: string;
-  pin: string;
+  email: string;
+  password: string;
 }) {
   const user = await getParentUser();
   if (!user) throw new Error("Unauthorized");
@@ -24,19 +24,31 @@ export async function addChild(input: {
     .single();
   if (!me) throw new Error("Akun tidak ditemukan");
 
-  const username = input.name.toLowerCase().replace(/\s+/g, ".");
+  // Buat akun Supabase Auth untuk anak
+  const { data: authData, error: authErr } = await serviceClient.auth.admin.createUser({
+    email: input.email,
+    password: input.password,
+    email_confirm: true,
+  });
+  if (authErr || !authData.user) {
+    throw new Error(authErr?.message ?? "Gagal membuat akun anak.");
+  }
+
   const { error } = await serviceClient.from("app_users").insert({
+    id: authData.user.id,
     family_id: me.family_id,
     name: input.name,
     role: "anak",
-    username,
-    auth_method: "pin",
-    pin_hash: hashPin(input.pin),
+    username: input.name.toLowerCase().replace(/\s+/g, "."),
+    auth_method: "password",
     avatar_color: input.avatarColor,
     age: input.age,
     member_status: "aktif",
   });
-  if (error) throw new Error(error.message);
+  if (error) {
+    await serviceClient.auth.admin.deleteUser(authData.user.id);
+    throw new Error(error.message);
+  }
   revalidatePath("/ortu/anggota");
 }
 
