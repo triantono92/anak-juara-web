@@ -52,6 +52,7 @@ CREATE INDEX IF NOT EXISTS idx_schedule_blocks_family ON schedule_blocks(family_
 -- RLS untuk schedule_blocks
 ALTER TABLE schedule_blocks ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY IF NOT EXISTS "ortu kelola jadwal sekeluarga" ON schedule_blocks
+DROP POLICY IF EXISTS "ortu kelola jadwal sekeluarga" ON schedule_blocks;
+CREATE POLICY "ortu kelola jadwal sekeluarga" ON schedule_blocks
   FOR ALL USING (family_id = current_family_id())
   WITH CHECK (family_id = current_family_id());
