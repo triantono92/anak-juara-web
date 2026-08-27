@@ -1,0 +1,4 @@
+{
+  "regions": ["sin1"],
+  "_comment": "Deploy all Vercel Functions to Singapore (sin1) to co-locate with Supabase. Verify your Supabase region at: Project Settings > General > Region. If your Supabase project is in a different region, update 'sin1' accordingly (e.g. 'syd1' for Sydney, 'iad1' for US-East)."
+}

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { ParentRole } from "@/lib/types";
 
@@ -17,7 +18,9 @@ export type AppUserSession = {
  * Menggantikan getChildSession() dan getParentUser() yang lama.
  * Kembalikan null kalau belum login atau tidak ada baris di app_users.
  */
-export async function getCurrentAppUser(): Promise<AppUserSession | null> {
+// cache() deduplicates calls within a single request — layout + page both call this
+// but only one supabase.auth.getUser() network round-trip is made per render.
+export const getCurrentAppUser = cache(async (): Promise<AppUserSession | null> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -41,7 +44,7 @@ export async function getCurrentAppUser(): Promise<AppUserSession | null> {
     stars: data.stars ?? 0,
     parentRole: (data.parent_role as ParentRole | null) ?? null,
   };
-}
+});
 
 /**
  * Pastikan user adalah ortu dengan hak edit penuh (bukan Wali).

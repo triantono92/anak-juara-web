@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getChildSession } from "@/lib/auth";
 import { AnakBottomNav } from "@/components/AnakBottomNav";
 
+
 export default async function AnakAppLayout({ children }: { children: React.ReactNode }) {
   const session = await getChildSession();
   if (!session) redirect("/masuk");

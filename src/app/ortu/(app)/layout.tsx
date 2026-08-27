@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getParentUser } from "@/lib/auth";
 import { OrtuBottomNav } from "@/components/OrtuBottomNav";
 
+
 export default async function OrtuAppLayout({ children }: { children: React.ReactNode }) {
   const user = await getParentUser();
   if (!user) redirect("/masuk");
